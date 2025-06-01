@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEALTSCOPEAI: Software para Médicos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Visualization & Content Choices: 
+        - Visión General -> Goal: Informar -> Method: Texto introductorio (HTML/CSS) -> Interaction: Ninguna -> Justification: Establece el propósito del software.
+        - Análisis IA: Flujo -> Goal: Organizar/Explicar -> Method: Diagrama simple con cajas (HTML/CSS) para "Subida -> IA (CNN) -> Detección" -> Interaction: Hover sutil en pasos -> Justification: Clarifica el proceso de IA.
+        - Análisis IA: Modelos -> Goal: Informar -> Method: Tarjetas para "Modelo Base" y "Fine-tuning" (HTML/CSS) -> Interaction: Ninguna -> Justification: Destaca opciones de IA.
+        - Dashboard: Métricas Clave -> Goal: Informar -> Method: KPI Cards (HTML/CSS) para "Tiempo Paciente", "Precisión Dx", "Satisfacción Paciente" -> Interaction: Ninguna -> Justification: Presentación clara de indicadores.
+        - Dashboard: Gráfico Precisión -> Goal: Comparar (simulado) -> Method: Bar Chart (Chart.js) -> Interaction: Tooltips -> Justification: Visualiza tendencia de precisión. (Container: w-full max-w-lg mx-auto h-72 md:h-80 max-h-80)
+        - Dashboard: Gráfico Satisfacción -> Goal: Proporción (simulado) -> Method: Doughnut Chart (Chart.js) -> Interaction: Tooltips -> Justification: Muestra distribución de satisfacción. (Container: w-full max-w-xs mx-auto h-64 md:h-72 max-h-72)
+        - Gestión Clínica: Funcionalidades -> Goal: Organizar -> Method: Lista detallada/tarjetas (HTML/CSS) para "Historial", "Seguimiento", "Notas", "Enlace App" -> Interaction: Ninguna -> Justification: Detalla herramientas de gestión.
+        - Tech/Seguridad: Stack -> Goal: Informar -> Method: Columnas o tarjetas (HTML/CSS) para Backend, IA, DB, Frontend -> Interaction: Ninguna -> Justification: Claridad sobre tecnologías.
+        - Tech/Seguridad: Medidas -> Goal: Informar -> Method: Lista con iconos Unicode (HTML/CSS) para MFA, JWT, Cifrado, Auditoría -> Interaction: Ninguna -> Justification: Destaca protocolos de seguridad.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .tab-button.active { border-color: #14b8a6; color: #0f766e; background-color: #ccfbf1; }
+        .kpi-card { background-color: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); text-align: center; }
+        .kpi-value { font-size: 2.25rem; font-weight: 700; color: #0f766e; }
+        .kpi-label { font-size: 0.875rem; color: #475569; }
+        .chart-container { position: relative; width: 100%; margin-left: auto; margin-right: auto; }
+        .ai-flow-step { border: 2px solid #99f6e4; background-color: #f0fdfa; padding: 1rem; border-radius: 0.5rem; text-align: center; transition: all 0.3s ease; }
+        .ai-flow-step:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .section-intro-title { font-size: 1.5rem; font-weight: 600; color: #0f766e; margin-bottom: 0.5rem; }
+        .section-intro-text { color: #334155; margin-bottom: 2rem; max-width: 700px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-teal-700">HEALTSCOPEAI: Software para Médicos</h1>
+            <p class="text-md text-slate-600 mt-2">Plataforma inteligente para optimizar el diagnóstico y la gestión clínica.</p>
+        </header>
+
+        <nav class="mb-8 flex flex-wrap justify-center gap-2 md:gap-3 border-b border-slate-200 pb-4">
+            <button data-tab="overview" class="tab-button active text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-2 border-transparent hover:bg-teal-50 transition-colors">Visión General</button>
+            <button data-tab="ai-analysis" class="tab-button text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-2 border-transparent hover:bg-teal-50 transition-colors">Análisis con IA</button>
+            <button data-tab="dashboard" class="tab-button text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-2 border-transparent hover:bg-teal-50 transition-colors">Dashboard Desempeño</button>
+            <button data-tab="clinical-management" class="tab-button text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-2 border-transparent hover:bg-teal-50 transition-colors">Gestión Clínica</button>
+            <button data-tab="tech-security" class="tab-button text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-2 border-transparent hover:bg-teal-50 transition-colors">Tecnología y Seguridad</button>
+        </nav>
+
+        <main>
+            <div id="overview" class="tab-content bg-white p-6 md:p-8 rounded-xl shadow-sm">
+                <h2 class="section-intro-title">Potenciando la Práctica Médica Moderna</h2>
+                <p class="section-intro-text">El software para médicos de HEALTSCOPEAI está diseñado para ser una herramienta integral que asiste a los profesionales de la salud en cada etapa de la atención al paciente. Desde el análisis inteligente de imágenes hasta la gestión eficiente de historiales clínicos y la monitorización del desempeño, nuestro objetivo es proporcionar una plataforma que mejore la precisión diagnóstica, optimice los flujos de trabajo y, en última instancia, eleve la calidad de la atención médica. Esta sección introductoria ofrece un panorama general de cómo el software se posiciona como un aliado clave para el médico del futuro.</p>
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-teal-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-lg text-teal-800 mb-2">Objetivo Principal</h3>
+                        <p class="text-sm text-teal-700">Proveer a los médicos herramientas avanzadas basadas en IA para un diagnóstico más rápido y preciso, y una gestión clínica optimizada, mejorando la eficiencia y los resultados para los pacientes.</p>
+                    </div>
+                    <div class="bg-sky-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-lg text-sky-800 mb-2">Integración en el Ecosistema</h3>
+                        <p class="text-sm text-sky-700">Este software se conecta de manera fluida con la aplicación del paciente, permitiendo un intercambio de información seguro y eficiente, como el envío de recetas e indicaciones médicas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ai-analysis" class="tab-content hidden bg-white p-6 md:p-8 rounded-xl shadow-sm">
+                <h2 class="section-intro-title">Inteligencia Artificial al Servicio del Diagnóstico</h2>
+                <p class="section-intro-text">La capacidad de análisis de imágenes médicas mediante IA es uno de los pilares de nuestro software. Esta sección detalla cómo los médicos pueden subir imágenes en diversos formatos y cómo nuestros modelos de Redes Neuronales Convolucionales (CNN) asisten en la detección de anomalías. Exploramos los modelos base preentrenados que utilizamos y la flexibilidad para el ajuste fino (fine-tuning), asegurando una herramienta adaptable y potente para el soporte diagnóstico.</p>
+                
+                <h3 class="text-xl font-semibold text-slate-700 mb-4 mt-6">Flujo de Análisis de Imágenes Médicas</h3>
+                <div class="grid md:grid-cols-3 gap-4 items-center text-center mb-8">
+                    <div class="ai-flow-step">
+                        <p class="font-semibold text-teal-700">1. Subida de Imágenes</p>
+                        <p class="text-xs text-slate-600">Soporte para DICOM, JPG, PNG. Interfaz intuitiva y segura.</p>
+                    </div>
+                    <div class="text-2xl text-slate-400 font-light hidden md:block">➔</div>
+                    <div class="ai-flow-step">
+                        <p class="font-semibold text-teal-700">2. Procesamiento con IA (CNN)</p>
+                        <p class="text-xs text-slate-600">Modelos avanzados para análisis (ej. CheXNet, EfficientNet).</p>
+                    </div>
+                    <div class="text-2xl text-slate-400 font-light hidden md:block">➔</div>
+                    <div class="ai-flow-step">
+                        <p class="font-semibold text-teal-700">3. Detección de Anomalías</p>
+                        <p class="text-xs text-slate-600">Identificación de lesiones, neumonía, etc. Resaltado visual.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-semibold text-slate-700 mb-4 mt-8">Modelos de IA y Personalización</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-slate-100 p-6 rounded-lg">
+                        <h4 class="font-semibold text-lg text-slate-800 mb-2">Modelos Base Preentrenados</h4>
+                        <p class="text-sm text-slate-600">Utilizamos modelos de IA robustos y validados como CheXNet o EfficientNet, entrenados con grandes datasets de imágenes médicas para ofrecer un alto rendimiento desde el inicio.</p>
+                    </div>
+                    <div class="bg-slate-100 p-6 rounded-lg">
+                        <h4 class="font-semibold text-lg text-slate-800 mb-2">Opción de Fine-Tuning</h4>
+                        <p class="text-sm text-slate-600">Ofrecemos la posibilidad de realizar ajustes finos (fine-tuning) a los modelos con datos locales, permitiendo adaptar y mejorar la precisión para casuísticas específicas de la institución.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dashboard" class="tab-content hidden bg-white p-6 md:p-8 rounded-xl shadow-sm">
+                <h2 class="section-intro-title">Dashboard de Desempeño: Métricas Clave para la Optimización</h2>
+                <p class="section-intro-text">El dashboard de desempeño proporciona a los médicos y administradores una visión clara y accionable sobre aspectos cruciales de la práctica clínica. A través de indicadores como el tiempo promedio por paciente, la precisión diagnóstica y la satisfacción del paciente (obtenida mediante feedback cruzado con la app móvil), se facilita la identificación de áreas de mejora y la toma de decisiones basadas en datos. Esta sección muestra cómo se visualizan estas métricas.</p>
+                
+                <div class="grid md:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                    <div class="kpi-card">
+                        <div class="kpi-value" id="avgTimePerPatient">18<span class="text-lg">min</span></div>
+                        <div class="kpi-label">Tiempo Promedio por Paciente</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value" id="diagnosticAccuracy">92<span class="text-lg">%</span></div>
+                        <div class="kpi-label">Precisión Diagnóstica (Validada)</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value" id="patientSatisfaction">4.6<span class="text-lg">/5</span></div>
+                        <div class="kpi-label">Satisfacción del Paciente</div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-slate-700 mb-3 text-center">Evolución de Precisión Diagnóstica (Simulado)</h3>
+                        <div class="chart-container h-72 md:h-80 max-h-80 w-full max-w-lg mx-auto">
+                            <canvas id="accuracyChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-slate-700 mb-3 text-center">Distribución de Satisfacción del Paciente (Simulado)</h3>
+                        <div class="chart-container h-64 md:h-72 max-h-72 w-full max-w-xs mx-auto">
+                            <canvas id="satisfactionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="clinical-management" class="tab-content hidden bg-white p-6 md:p-8 rounded-xl shadow-sm">
+                <h2 class="section-intro-title">Gestión Clínica Integral y Conectada</h2>
+                <p class="section-intro-text">Más allá del diagnóstico asistido por IA, el software ofrece un conjunto completo de herramientas para la gestión clínica diaria. Esto incluye historiales médicos digitales detallados, seguimiento de la evolución del paciente y la capacidad de registrar notas clínicas estructuradas. Un aspecto fundamental es la conexión directa con la aplicación del paciente, que permite el envío seguro y eficiente de recetas, indicaciones y otros comunicados, cerrando el ciclo de atención.</p>
+                
+                <div class="space-y-6 mt-6">
+                    <div class="bg-slate-100 p-5 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg text-slate-800 mb-1">Historial Médico Digital Completo</h3>
+                        <p class="text-sm text-slate-600">Acceso centralizado y seguro a la información del paciente, incluyendo antecedentes, diagnósticos previos, tratamientos y resultados de pruebas.</p>
+                    </div>
+                    <div class="bg-slate-100 p-5 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg text-slate-800 mb-1">Seguimiento de Evolución y Notas Clínicas</h3>
+                        <p class="text-sm text-slate-600">Herramientas para registrar el progreso del paciente a lo largo del tiempo, con plantillas personalizables para notas clínicas y la capacidad de adjuntar archivos relevantes.</p>
+                    </div>
+                    <div class="bg-teal-50 p-5 rounded-lg shadow border-l-4 border-teal-500">
+                        <h3 class="font-semibold text-lg text-teal-800 mb-1">Enlace Directo con la App del Paciente</h3>
+                        <p class="text-sm text-teal-700">Funcionalidad para enviar recetas digitales, indicaciones post-consulta, recordatorios y material educativo directamente a la aplicación móvil del paciente, mejorando la comunicación y la adherencia.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tech-security" class="tab-content hidden bg-white p-6 md:p-8 rounded-xl shadow-sm">
+                <h2 class="section-intro-title">Fundamentos Tecnológicos y Seguridad Robusta</h2>
+                <p class="section-intro-text">La fiabilidad y seguridad del software médico son primordiales. Esta sección describe el stack tecnológico que impulsa la plataforma, desde el backend con Django REST Framework hasta las librerías de IA como PyTorch o TensorFlow. Además, se detallan las múltiples capas de seguridad implementadas, incluyendo autenticación multifactor (MFA), tokens JWT, cifrado de imágenes médicas y registros de auditoría exhaustivos, garantizando la protección de datos sensibles y el cumplimiento normativo.</p>
+
+                <div class="grid md:grid-cols-2 gap-8 mt-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-slate-700 mb-4">Stack Tecnológico Principal</h3>
+                        <ul class="space-y-3">
+                            <li class="p-3 bg-slate-100 rounded-md"><strong class="text-teal-700">Backend:</strong> Django REST Framework (Python)</li>
+                            <li class="p-3 bg-slate-100 rounded-md"><strong class="text-teal-700">Inteligencia Artificial:</strong> PyTorch / TensorFlow (Python)</li>
+                            <li class="p-3 bg-slate-100 rounded-md"><strong class="text-teal-700">Base de Datos:</strong> PostgreSQL</li>
+                            <li class="p-3 bg-slate-100 rounded-md"><strong class="text-teal-700">Frontend Médico:</strong> React / Next.js</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-slate-700 mb-4">Medidas de Seguridad Clave</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-center p-3 bg-slate-100 rounded-md"><span class="text-xl mr-3">🔑</span><div><strong class="text-teal-700">Autenticación Segura:</strong> Login con MFA y JWT tokens.</div></li>
+                            <li class="flex items-center p-3 bg-slate-100 rounded-md"><span class="text-xl mr-3">🛡️</span><div><strong class="text-teal-700">Cifrado de Datos:</strong> Encriptación robusta para imágenes médicas y datos sensibles.</div></li>
+                            <li class="flex items-center p-3 bg-slate-100 rounded-md"><span class="text-xl mr-3">📋</span><div><strong class="text-teal-700">Registros de Auditoría:</strong> Trazabilidad completa de accesos y modificaciones.</div></li>
+                            <li class="flex items-center p-3 bg-slate-100 rounded-md"><span class="text-xl mr-3">⚙️</span><div><strong class="text-teal-700">Cumplimiento Normativo:</strong> Diseño orientado a HIPAA/GDPR.</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabs = document.querySelectorAll('.tab-button');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const targetId = tab.getAttribute('data-tab');
+                contents.forEach(content => {
+                    if (content.id === targetId) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        const accuracyData = {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Precisión Diagnóstica',
+                data: [85, 88, 87, 90, 92, 91],
+                backgroundColor: 'rgba(20, 184, 166, 0.6)',
+                borderColor: 'rgba(13, 148, 136, 1)',
+                borderWidth: 1,
+                borderRadius: 4,
+            }]
+        };
+        const accuracyCtx = document.getElementById('accuracyChart');
+        if (accuracyCtx) {
+            new Chart(accuracyCtx.getContext('2d'), {
+                type: 'bar',
+                data: accuracyData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 100, ticks: { callback: function(value) { return value + "%" } } } },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.parsed.y + '%'; } } } }
+                }
+            });
+        }
+
+        const satisfactionData = {
+            labels: ['Muy Satisfecho', 'Satisfecho', 'Neutral', 'Insatisfecho'],
+            datasets: [{
+                label: 'Satisfacción del Paciente',
+                data: [60, 25, 10, 5],
+                backgroundColor: ['#0d9488', '#14b8a6', '#5eead4', '#99f6e4'],
+                hoverOffset: 4,
+                borderColor: '#ffffff',
+                borderWidth: 2,
+            }]
+        };
+        const satisfactionCtx = document.getElementById('satisfactionChart');
+        if (satisfactionCtx) {
+            new Chart(satisfactionCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: satisfactionData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 15, boxWidth: 12 } },
+                        tooltip: { callbacks: { label: function(context) { return context.label + ': ' + context.parsed + '%'; } } }
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
